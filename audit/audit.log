@@ -1,0 +1,2 @@
+type=DAEMON_START msg=audit(1332573784.220:4440): auditd start, ver=1.7.13 format=raw kernel=3.0.0-12-generic auid=4294967295 pid=609 subj=unconfined  res=success
+type=CONFIG_CHANGE msg=audit(1332573784.342:9): audit_backlog_limit=320 old=64 auid=4294967295 ses=4294967295 res=1
