@@ -1,0 +1,1 @@
+cmd_/home/xys/build/4_kernel/module/syscall.ko := ld -r -m elf_i386 -T /home/xys/build/linux-2.6.38.8/scripts/module-common.lds --build-id  -o /home/xys/build/4_kernel/module/syscall.ko /home/xys/build/4_kernel/module/syscall.o /home/xys/build/4_kernel/module/syscall.mod.o

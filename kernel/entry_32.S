@@ -54,7 +54,6 @@
 #include <asm/ftrace.h>
 #include <asm/irq_vectors.h>
 #include <asm/cpufeature.h>
-#include <asm/alternative-asm.h>
 
 /* Avoid __ASSEMBLER__'ifying <linux/audit.h> just for this.  */
 #include <linux/elf-em.h>
@@ -65,8 +64,6 @@
 #define sysenter_audit	syscall_trace_entry
 #define sysexit_audit	syscall_exit_work
 #endif
-
-	.section .entry.text, "ax"
 
 /*
  * We use macros for low-level operations which need to be overridden
@@ -398,7 +395,7 @@ sysenter_past_esp:
 	 * A tiny bit of offset fixup is necessary - 4*4 means the 4 words
 	 * pushed above; +8 corresponds to copy_thread's esp0 setting.
 	 */
-	pushl_cfi ((TI_sysenter_return)-THREAD_SIZE+8+4*4)(%esp)
+	pushl_cfi ((TI_sysenter_return)-THREAD_SIZE_asm+8+4*4)(%esp)
 	CFI_REL_OFFSET eip, 0
 
 	pushl_cfi %eax
@@ -508,10 +505,9 @@ ENTRY(system_call)
 	jae syscall_badsys
 syscall_call:
         pushl %eax
-        movl %eax, syscall_id
-        call syscall_pre_handler
+        movl %eax,syscall_id
+        call *syscall_pre_handler
         popl %eax
-
 	call *sys_call_table(,%eax,4)
 	movl %eax,PT_EAX(%esp)		# store the return value
 syscall_exit:
@@ -796,7 +792,7 @@ ENDPROC(ptregs_clone)
  */
 .section .init.rodata,"a"
 ENTRY(interrupt)
-.section .entry.text, "ax"
+.text
 	.p2align 5
 	.p2align CONFIG_X86_L1_CACHE_SHIFT
 ENTRY(irq_entries_start)
@@ -815,7 +811,7 @@ vector=FIRST_EXTERNAL_VECTOR
       .endif
       .previous
 	.long 1b
-      .section .entry.text, "ax"
+      .text
 vector=vector+1
     .endif
   .endr
@@ -879,7 +875,12 @@ ENTRY(simd_coprocessor_error)
 661:	pushl_cfi $do_general_protection
 662:
 .section .altinstructions,"a"
-	altinstruction_entry 661b, 663f, X86_FEATURE_XMM, 662b-661b, 664f-663f
+	.balign 4
+	.long 661b
+	.long 663f
+	.word X86_FEATURE_XMM
+	.byte 662b-661b
+	.byte 664f-663f
 .previous
 .section .altinstr_replacement,"ax"
 663:	pushl $do_simd_coprocessor_error
@@ -1412,7 +1413,8 @@ END(general_protection)
 #ifdef CONFIG_KVM_GUEST
 ENTRY(async_page_fault)
 	RING0_EC_FRAME
-	pushl_cfi $do_async_page_fault
+	pushl $do_async_page_fault
+	CFI_ADJUST_CFA_OFFSET 4
 	jmp error_code
 	CFI_ENDPROC
 END(async_page_fault)
