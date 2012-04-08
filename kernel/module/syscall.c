@@ -26,7 +26,7 @@ static struct file *log;
 static char buf[BUF_SIZE];
 
 int black_calls[10] = {265};
-char *black_comms[10] = {"Xorg","chrome"};
+char *black_comms[10] = {"Xorg","chrome","Chrome_ChildIOT","Chrome_IOThread","Chrome_CacheThr"};
 
 static void new_pre_handler(void){
     mm_segment_t old_fs;
