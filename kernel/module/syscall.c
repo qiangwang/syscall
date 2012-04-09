@@ -14,7 +14,6 @@
 MODULE_LICENSE("GPL");
 
 #define LOG_FILE "/var/log/syscall/syscall.log"
-#define BUF_SIZE 32
 
 extern unsigned long syscall_id;
 
@@ -23,13 +22,12 @@ static unsigned long old_handler;
     
 static struct file *log;
 
-static char buf[BUF_SIZE];
-
-int black_calls[10] = {265};
-char *black_comms[10] = {"Xorg","chrome","Chrome_ChildIOT","Chrome_IOThread","Chrome_CacheThr"};
+int black_calls[10] = {};//{265};
+char *black_comms[10] = {};//{"Xorg","chrome","Chrome_ChildIOT","Chrome_IOThread","Chrome_CacheThr"};
 
 static void new_pre_handler(void){
     mm_segment_t old_fs;
+    char buf[32];
     int i;
 
     for(i=0;black_calls[i]!=0;i++){
@@ -44,6 +42,7 @@ static void new_pre_handler(void){
     set_fs(get_ds());
 
     sprintf(buf, "%lu,%d,%s\n", syscall_id, current->pid, current->comm);
+
     log->f_op->write(log, buf, strlen(buf), &log->f_pos);
 
     set_fs(old_fs);

@@ -1,2 +1,2 @@
-/home/xys/build/4_kernel/module/syscall.ko
-/home/xys/build/4_kernel/module/syscall.o
+/home/qw/git/syscall/kernel/module/syscall.ko
+/home/qw/git/syscall/kernel/module/syscall.o
