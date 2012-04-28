@@ -22,9 +22,13 @@ static unsigned long old_handler;
     
 static struct file *log;
 
-int black_calls[10] = {};//{265};
-char *black_comms[10] = {};//{"Xorg","chrome","Chrome_ChildIOT","Chrome_IOThread","Chrome_CacheThr"};
-
+int black_calls[10] = {265,119,240};
+char *black_comms[10] = {};
+/*{
+    "Xorg","chrome","Chrome_ChildIOT","Chrome_IOThread","Chrome_CacheThr",
+    "gnome-terminal","gnome-shell"
+};
+*/
 static void new_pre_handler(void){
     mm_segment_t old_fs;
     char buf[32];
