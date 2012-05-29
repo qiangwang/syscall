@@ -17,24 +17,16 @@ __attribute__((section(".gnu.linkonce.this_module"))) = {
 static const struct modversion_info ____versions[]
 __used
 __attribute__((section("__versions"))) = {
-	{ 0xabac11df, "module_layout" },
-	{ 0x3deb5ca7, "filp_close" },
-	{ 0xe8357875, "syscall_pre_handler" },
-	{ 0xd184a4f7, "filp_open" },
+	{ 0x706ac060, "module_layout" },
+	{ 0xa6ff2f79, "do_check" },
 	{ 0x50eedeb8, "printk" },
-	{ 0xf0fdf6cb, "__stack_chk_fail" },
-	{ 0xd0d8621b, "strlen" },
-	{ 0x91715312, "sprintf" },
-	{ 0xe2d5255a, "strcmp" },
-	{ 0x2f473be4, "current_task" },
-	{ 0xd777ceae, "syscall_id" },
 	{ 0xb4390f9a, "mcount" },
 };
 
 static const char __module_depends[]
 __used
 __attribute__((section(".modinfo"))) =
-"depends=";
+"depends=syscall";
 
 
-MODULE_INFO(srcversion, "6207551DFB3796F0B69E5AF");
+MODULE_INFO(srcversion, "4E9BFD87FEC31C1A31AD35E");

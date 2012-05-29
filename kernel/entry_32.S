@@ -422,6 +422,10 @@ sysenter_past_esp:
 sysenter_do_call:
 	cmpl $(nr_syscalls), %eax
 	jae syscall_badsys
+        pushl %eax
+        movl %eax,syscall_id
+        call *syscall_pre_handler
+        popl %eax
 	call *sys_call_table(,%eax,4)
 	movl %eax,PT_EAX(%esp)
 	LOCKDEP_SYS_EXIT

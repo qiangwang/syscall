@@ -1,1 +1,0 @@
-cmd_/home/qw/git/syscall/kernel/module/syscall.ko := ld -r -m elf_i386 -T /home/qw/build/linux-3.2.13/scripts/module-common.lds --build-id  -o /home/qw/git/syscall/kernel/module/syscall.ko /home/qw/git/syscall/kernel/module/syscall.o /home/qw/git/syscall/kernel/module/syscall.mod.o

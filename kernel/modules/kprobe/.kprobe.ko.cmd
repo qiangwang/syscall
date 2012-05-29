@@ -1,0 +1,1 @@
+cmd_/home/xys/git/syscall/kernel/modules/kprobe/kprobe.ko := ld -r -m elf_i386 -T /home/xys/build/linux-3.3.4/scripts/module-common.lds --build-id  -o /home/xys/git/syscall/kernel/modules/kprobe/kprobe.ko /home/xys/git/syscall/kernel/modules/kprobe/kprobe.o /home/xys/git/syscall/kernel/modules/kprobe/kprobe.mod.o

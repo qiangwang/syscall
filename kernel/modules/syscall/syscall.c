@@ -23,23 +23,25 @@ typedef void (*check_handler) (void);
 unsigned long do_check;
 EXPORT_SYMBOL(do_check);    
 
-static int white_pids[MAX_WHITE] = {0};
-static int white_uids[MAX_WHITE] = {0};
-static char *white_comms[MAX_WHITE] = {"mysql","mysqld","nginx"};
+static int pids[MAX_WHITE];
+static int nr_pid;
+module_param_array(pids, int, &nr_pid, 0644);
+
+static char *comms[MAX_WHITE];
+static int nr_comm;
+module_param_array(comms, charp, &nr_comm, 0644);
 
 static int is_white(void){
     int i;
 
-    for(i=0; white_uids[i] != 0; i++){
-        if(current->cred->uid == white_uids[i]){
+    for(i=0; i < nr_pid ; i++){
+        if(current->pid == pids[i]){
             return 1;
         }
     }
    
-    for(i=0; white_comms[i]!=NULL; i++){
-        if(strcasecmp(current->comm, white_comms[i]) == 0 
-                || 
-                strcasecmp(current->parent->comm, white_comms[i]) == 0){
+    for(i=0; i < nr_comm ; i++){
+        if(strcmp(current->comm, comms[i]) == 0){
             return 1;
         }
     }
