@@ -10,27 +10,39 @@
 #include <linux/ioctl.h>
 #include <linux/string.h>
 
+/*日志文件*/
 #define LOG_FILE "/var/log/syscall/syscall.log"
 #define MAX_WHITE 10
 
 static struct file *log;
 
+/*系统调用号*/
 extern unsigned long syscall_id;
+/*钩子函数*/
 extern unsigned long syscall_pre_handler;
+/*保存原来的处理函数*/
 static unsigned long old_handler;
 
+/*将检测集成进内核*/
 typedef void (*check_handler) (void);
 unsigned long do_check;
 EXPORT_SYMBOL(do_check);    
 
+/*待测进程ID*/
 static int pids[MAX_WHITE];
 static int nr_pid;
 module_param_array(pids, int, &nr_pid, 0644);
 
+/*待测进程comm*/
 static char *comms[MAX_WHITE];
 static int nr_comm;
 module_param_array(comms, charp, &nr_comm, 0644);
 
+/*
+ * 如果进程的pid在pids数组中或
+ * 进程的comm在comms数组中
+ * 则会记录其调用序列，否则跳过
+ * */
 static int is_white(void){
     int i;
 
@@ -49,6 +61,16 @@ static int is_white(void){
     return 0;
 }
 
+/*
+ *钩子函数的实现
+ *
+ * 1.判断当前进程是否需要处理
+ * 2.扩展内核模块访问文件空间的范围
+ * 3.记录调用到日志文件
+ * 4.恢复文件系统访问空间
+ * 5.检查并执行检测算法
+ * 
+ * */
 static void new_pre_handler(void){
     mm_segment_t old_fs;
     char buf[32];
@@ -70,6 +92,14 @@ static void new_pre_handler(void){
     if(do_check) ((check_handler)do_check)();
 }
 
+/*
+ *模块初始化
+ * 
+ * 1.打开日志文件
+ * 2.替换钩子函数
+ * 3.保存原来的处理函数
+ *
+ * */
 static int __init syscall_init(void){
 
     printk("syscall init.\n");
@@ -91,6 +121,13 @@ static int __init syscall_init(void){
     return 0;
 }
 
+/*
+ *模块卸载
+ *
+ * 1.恢复处理函数
+ * 2.关闭日志文件
+ *
+ * */
 static void __exit syscall_exit(void){
     printk("place old handler...\n");
     syscall_pre_handler = old_handler;
